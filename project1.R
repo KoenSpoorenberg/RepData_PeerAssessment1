@@ -1,13 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
-
-
-#setwd("C:/Users/Koen/Documents/GitHub/RepData_PeerAssessment1")
-library(lattice)
+setwd("C:/Users/Koen/Documents/GitHub/RepData_PeerAssessment1")
 
 ## Loading and preprocessing the data
 
@@ -41,7 +32,7 @@ mean_steps<-as.integer(mean(activity.prepped.sum.by.date$steps))
 median_steps<-as.integer(median(activity.prepped.sum.by.date$steps))
 
 ##What is the average daily activity pattern?
-#mean steps by interval
+#sum steps by day
 activity.prepped.sum.by.interval <- aggregate(list(steps = activity.prepped$steps), by=list(interval=activity.prepped$interval), FUN=mean)
 #create the plot 
 plot(activity.prepped.sum.by.interval$interval, activity.prepped.sum.by.interval$steps, type="l", xlab="5' intervals", ylab="Average steps")
@@ -70,20 +61,10 @@ new_median_steps<-as.integer(median(activity.impute.sum.by.date$steps))
 ##Are there differences in activity patterns between weekdays and weekends?
 
 #add variable day and weekendindicator 
-Sys.setlocale("LC_TIME", "English")
+
 activity.impute$weekday<-weekdays(as.Date(activity.impute$date))
-activity.impute$weekendind<-ifelse(activity.impute$weekday=="Saturday" |activity.impute$weekday=="Sunday", "Weekend", "Weekday") 
+activity.impute$weekdaynr<-as.POSIXlt(activity.impute$weekday)
 
-#mean steps by weekendind/interval
-activity.impute.wk <- aggregate(steps ~ weekendind+interval, data=activity.impute, FUN=mean)
 
-#create the plot 
-
-xyplot(steps ~ interval | factor(weekendind),
-       layout = c(1, 2),
-       xlab="Interval",
-       ylab="#steps",
-       type="l",
-       lty=1,
-       data=activity.impute.wk)
-
+activity.impute$weekendind<-ifelse(activity.impute$weekday=="Saterday" ||activity.impute$weekday=="Sunday", "Weekend", "Weekday") 
+activity.impute
